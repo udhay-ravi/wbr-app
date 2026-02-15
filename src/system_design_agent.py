@@ -156,8 +156,41 @@ def build_design_options(app_idea: str, answers: Dict[str, str]) -> Dict[str, ob
         "app_idea": app_idea,
         "domain": domain,
         "clarifying_summary": _summary(answers),
+        "required_answers": [q["id"] for q in BASE_QUESTIONS],
         "designs": designs,
     }
+
+
+def _domain_components(domain: str) -> List[str]:
+    if domain == "ecommerce":
+        return ["Catalog Service", "Checkout Service", "Inventory Service"]
+    if domain == "stream":
+        return ["Ingestion Service", "Transcoding Pipeline", "Session Service"]
+    if domain == "iot":
+        return ["Device Gateway", "Telemetry Rules Engine", "Time-series Query Service"]
+    return ["Tenant Service", "Billing Service", "Notification Service"]
+
+
+def _domain_user_actions(domain: str) -> List[str]:
+    if domain == "ecommerce":
+        return [
+            "User searches products, reviews details, and adds items to cart.",
+            "Checkout requests reserve inventory, validate payment, and create order records.",
+        ]
+    if domain == "stream":
+        return [
+            "Creator uploads media; ingestion validates and sends content to processing.",
+            "Viewers request playback; service returns optimized stream variants by device/network.",
+        ]
+    if domain == "iot":
+        return [
+            "Devices publish telemetry bursts through secure gateway endpoints.",
+            "Rules engine evaluates thresholds and triggers notifications/automation actions.",
+        ]
+    return [
+        "User signs in to tenant workspace and performs business operations.",
+        "Billing and notification workflows are triggered from product usage events.",
+    ]
 
 
 def _summary(answers: Dict[str, str]) -> List[str]:
@@ -171,6 +204,8 @@ def _summary(answers: Dict[str, str]) -> List[str]:
 
 
 def _simple_design(app_idea: str, domain: str, answers: Dict[str, str], s: ProviderServices) -> dict:
+    domain_components = _domain_components(domain)
+    domain_actions = _domain_user_actions(domain)
     return {
         "level": "Simple design",
         "goal": f"Fast launch for {app_idea} with minimal operational complexity.",
@@ -178,6 +213,7 @@ def _simple_design(app_idea: str, domain: str, answers: Dict[str, str], s: Provi
             s.waf,
             s.lb,
             "Single API service",
+            *domain_components,
             s.database,
             s.cache,
             s.object_store,
@@ -194,6 +230,7 @@ def _simple_design(app_idea: str, domain: str, answers: Dict[str, str], s: Provi
             "User opens app and sends request to API through WAF and load balancer.",
             "API validates auth, serves data from cache when possible, and falls back to DB.",
             "Media/files are fetched from object storage and returned to clients.",
+            *domain_actions,
         ],
         "traffic_flow": [
             "Mostly synchronous request-response path.",
@@ -205,6 +242,8 @@ def _simple_design(app_idea: str, domain: str, answers: Dict[str, str], s: Provi
 
 
 def _medium_design(app_idea: str, domain: str, answers: Dict[str, str], s: ProviderServices) -> dict:
+    domain_components = _domain_components(domain)
+    domain_actions = _domain_user_actions(domain)
     return {
         "level": "Complex design (Medium scale)",
         "goal": f"Scale {app_idea} for growing traffic with bounded service decomposition.",
@@ -214,6 +253,7 @@ def _medium_design(app_idea: str, domain: str, answers: Dict[str, str], s: Provi
             s.lb,
             s.compute,
             "API Gateway + Auth Service + Domain Services",
+            *domain_components,
             s.queue,
             s.database,
             s.cache,
@@ -232,6 +272,7 @@ def _medium_design(app_idea: str, domain: str, answers: Dict[str, str], s: Provi
             "User login and app interactions route through API gateway for auth, throttling, and routing.",
             "Core business action is written to DB and emits event to queue for async tasks (notifications, indexing, billing).",
             "Background workers consume queue, process tasks, and update read models/cache.",
+            *domain_actions,
         ],
         "traffic_flow": [
             "Mixed synchronous + asynchronous traffic pattern.",
@@ -243,6 +284,8 @@ def _medium_design(app_idea: str, domain: str, answers: Dict[str, str], s: Provi
 
 
 def _highly_complex_design(app_idea: str, domain: str, answers: Dict[str, str], s: ProviderServices) -> dict:
+    domain_components = _domain_components(domain)
+    domain_actions = _domain_user_actions(domain)
     return {
         "level": "Highly complex design",
         "goal": f"Global, resilient architecture for very high-scale {app_idea} traffic and strict uptime targets.",
@@ -254,6 +297,7 @@ def _highly_complex_design(app_idea: str, domain: str, answers: Dict[str, str], 
             f"Multi-region {s.compute}",
             "Service mesh",
             "CQRS read/write services",
+            *domain_components,
             s.queue,
             f"Global primary + regional replicas of {s.database}",
             s.cache,
@@ -275,6 +319,7 @@ def _highly_complex_design(app_idea: str, domain: str, answers: Dict[str, str], 
             "Write actions go through idempotent write services; events are published for downstream projections and analytics.",
             "Read actions are served by regional read stacks and cache for low-latency responses.",
             "If a region degrades, traffic shifts automatically with minimal user-visible disruption.",
+            *domain_actions,
         ],
         "traffic_flow": [
             "Global edge ingress with region-aware routing and automated health checks.",

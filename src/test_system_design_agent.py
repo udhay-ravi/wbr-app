@@ -35,3 +35,17 @@ def test_build_returns_three_levels_with_user_actions_and_traffic_flow():
     assert all(recommendation["designs"][i]["user_actions"] for i in range(3))
     assert all(recommendation["designs"][i]["traffic_flow"] for i in range(3))
     assert any("Amazon" in component for component in recommendation["designs"][1]["components"])
+
+
+def test_recommendation_contains_required_answers_and_domain_specific_components():
+    recommendation = system_design_agent.build_design_options(
+        "ecommerce marketplace with checkout",
+        {"cloud_provider": "aws"},
+    )
+
+    assert "required_answers" in recommendation
+    assert "cloud_provider" in recommendation["required_answers"]
+    assert any(
+        "Checkout Service" in component
+        for component in recommendation["designs"][0]["components"]
+    )
