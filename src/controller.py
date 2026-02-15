@@ -283,6 +283,28 @@ def get_file_name():
     )
 
 
+
+
+@app.route('/system-design', methods=['GET'])
+def system_design_page():
+    return redirect('/system-design.html')
+
+
+@app.route('/api/system-design/health', methods=['GET'])
+def system_design_health():
+    return app.response_class(
+        response=json.dumps({
+            "status": "ok",
+            "message": "System design service is running",
+            "try": {
+                "ui": "/system-design.html",
+                "questions": "/api/system-design/questions",
+            },
+        }, indent=4),
+        status=200,
+        mimetype='application/json'
+    )
+
 @app.route('/api/system-design/questions', methods=['GET', 'POST'])
 def system_design_questions():
     payload = request.get_json(silent=True) or {}
