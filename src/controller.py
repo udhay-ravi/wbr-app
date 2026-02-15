@@ -289,6 +289,10 @@ def system_design_questions():
     app_idea = payload.get('app_idea', request.args.get('app_idea', ''))
     return app.response_class(
         response=json.dumps({"questions": system_design_agent.get_questions(app_idea)}, indent=4),
+@app.route('/api/system-design/questions', methods=['GET'])
+def system_design_questions():
+    return app.response_class(
+        response=json.dumps({"questions": system_design_agent.get_questions()}, indent=4),
         status=200,
         mimetype='application/json'
     )
@@ -310,6 +314,10 @@ def system_design_options():
     recommendation = system_design_agent.build_design_options(app_idea, answers)
     return app.response_class(
         response=json.dumps(recommendation, indent=4),
+    answers = payload.get("answers", {})
+    options = system_design_agent.build_design_options(answers)
+    return app.response_class(
+        response=json.dumps({"options": options}, indent=4),
         status=200,
         mimetype='application/json'
     )
