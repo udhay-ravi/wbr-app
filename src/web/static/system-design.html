@@ -3,33 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>System Design Agent</title>
+  <title>GitHub → DigitalOcean System Designer</title>
   <link rel="stylesheet" href="system-design.css" />
 </head>
 <body>
   <main class="container">
-    <h1>System Design Agent</h1>
-    <p>Describe your app idea, answer clarifying questions, and receive 3 architecture levels with diagrams and traffic-flow explanations.</p>
+    <h1>GitHub to DigitalOcean Deployer</h1>
+    <p>Flow: connect repo → generate architecture diagram → one-click deployment plan.</p>
 
     <section class="panel">
-      <label for="appIdea"><strong>App idea</strong></label>
-      <textarea id="appIdea" rows="3" placeholder="Example: Build a food delivery app with live order tracking and millions of users"></textarea>
-      <div class="actions inline">
-        <button id="askQuestions">Ask Clarifying Questions</button>
+      <label for="appIdea"><strong>App description</strong></label>
+      <textarea id="appIdea" rows="2" placeholder="Example: Multi-tenant SaaS analytics dashboard"></textarea>
+
+      <label for="repo_url"><strong>GitHub repository URL</strong></label>
+      <input id="repo_url" placeholder="https://github.com/org/repo" />
+
+      <div id="questionnaire"></div>
+
+      <label for="do_token"><strong>DigitalOcean API token</strong> (doctl key)</label>
+      <input id="do_token" type="password" placeholder="dop_v1_..." />
+
+      <div class="actions">
+        <button id="generate">Generate System Design</button>
+        <button id="deploy" disabled>Deploy to DigitalOcean</button>
       </div>
     </section>
-
-    <section id="questionnaire" class="panel hidden"></section>
-
-    <div class="actions hidden" id="generateWrap">
-      <button id="generate">Generate 3 Design Levels</button>
-    <p>Answer a few architecture questions and get cloud-specific design options with diagrams.</p>
-
-    <section id="questionnaire" class="panel"></section>
-
-    <div class="actions">
-      <button id="generate">Generate Design Options</button>
-    </div>
 
     <section id="results"></section>
   </main>

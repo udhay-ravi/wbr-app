@@ -19,41 +19,31 @@ body {
   margin-bottom: 16px;
 }
 
-.hidden {
-  display: none;
-}
-
-textarea {
-  width: 100%;
-  max-width: 760px;
-  margin-top: 8px;
-  padding: 10px;
-}
-
-.question {
-  margin-bottom: 14px;
-}
-
-.question label {
+label {
   display: block;
   font-weight: bold;
+  margin-top: 10px;
   margin-bottom: 6px;
 }
 
-.question select {
+input,
+textarea,
+select {
   width: 100%;
-  max-width: 420px;
-  max-width: 360px;
-  padding: 8px;
+  max-width: 760px;
+  padding: 10px;
+  border: 1px solid #c9d5e6;
+  border-radius: 6px;
+}
+
+.question {
+  margin-top: 8px;
 }
 
 .actions {
-  margin: 12px 0 16px;
-}
-
-.actions.inline {
-  margin-bottom: 0;
   margin: 16px 0;
+  display: flex;
+  gap: 12px;
 }
 
 button {
@@ -65,15 +55,12 @@ button {
   cursor: pointer;
 }
 
-.option-card {
-  background: #fff;
-  border: 1px solid #dbe3ee;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 16px;
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-.option-card pre {
+pre {
   background: #0b1020;
   color: #cde4ff;
   border-radius: 6px;
