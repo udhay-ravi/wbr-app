@@ -69,7 +69,7 @@ def get_wbr_metrics():
     )
 
 
-def process_input(data, cfg):
+def process_input(data, cfg, events_data=None):
     try:
         wbr_validator = validator.WBRValidator(data, cfg)
         wbr_validator.validate_yaml()
@@ -283,16 +283,34 @@ def get_file_name():
     )
 
 
+
+
+@app.route('/system-design', methods=['GET'])
+def system_design_page():
+    return redirect('/system-design.html')
+
+
+@app.route('/api/system-design/health', methods=['GET'])
+def system_design_health():
+    return app.response_class(
+        response=json.dumps({
+            "status": "ok",
+            "message": "System design service is running",
+            "try": {
+                "ui": "/system-design.html",
+                "questions": "/api/system-design/questions",
+            },
+        }, indent=4),
+        status=200,
+        mimetype='application/json'
+    )
+
 @app.route('/api/system-design/questions', methods=['GET', 'POST'])
 def system_design_questions():
     payload = request.get_json(silent=True) or {}
     app_idea = payload.get('app_idea', request.args.get('app_idea', ''))
     return app.response_class(
         response=json.dumps({"questions": system_design_agent.get_questions(app_idea)}, indent=4),
-@app.route('/api/system-design/questions', methods=['GET'])
-def system_design_questions():
-    return app.response_class(
-        response=json.dumps({"questions": system_design_agent.get_questions()}, indent=4),
         status=200,
         mimetype='application/json'
     )
@@ -304,20 +322,60 @@ def system_design_options():
     app_idea = payload.get("app_idea", "")
     answers = payload.get("answers", {})
 
-    if not app_idea.strip():
+    repo_url = answers.get("repo_url", "")
+    if not repo_url.strip():
         return app.response_class(
-            response=json.dumps({"error": "app_idea is required"}, indent=4),
+            response=json.dumps({"error": "answers.repo_url is required"}, indent=4),
             status=400,
             mimetype='application/json'
         )
 
-    recommendation = system_design_agent.build_design_options(app_idea, answers)
+    try:
+        recommendation = system_design_agent.build_design_options(app_idea, answers)
+    except ValueError as error:
+        return app.response_class(
+            response=json.dumps({"error": str(error)}, indent=4),
+            status=400,
+            mimetype='application/json'
+        )
+
     return app.response_class(
         response=json.dumps(recommendation, indent=4),
-    answers = payload.get("answers", {})
-    options = system_design_agent.build_design_options(answers)
+        status=200,
+        mimetype='application/json'
+    )
+
+
+@app.route('/api/system-design/deploy', methods=['POST'])
+def deploy_system_design():
+    payload = request.get_json(silent=True) or {}
+    repo_full_name = payload.get('repo_full_name', '')
+    region = payload.get('region', 'nyc3')
+    do_token = payload.get('do_token', '')
+
+    if '/' not in repo_full_name:
+        return app.response_class(
+            response=json.dumps({"error": "repo_full_name must look like owner/repo"}, indent=4),
+            status=400,
+            mimetype='application/json'
+        )
+
+    if not do_token.startswith('dop_v1_'):
+        return app.response_class(
+            response=json.dumps({
+                "error": "A valid DigitalOcean personal access token is required (starts with dop_v1_)."
+            }, indent=4),
+            status=400,
+            mimetype='application/json'
+        )
+
+    commands = system_design_agent.build_doctl_commands(repo_full_name, region)
     return app.response_class(
-        response=json.dumps({"options": options}, indent=4),
+        response=json.dumps({
+            "status": "accepted",
+            "message": "Deployment workflow prepared. Execute these commands in your CI runner or deployment worker.",
+            "commands": commands,
+        }, indent=4),
         status=200,
         mimetype='application/json'
     )
