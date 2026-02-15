@@ -283,6 +283,12 @@ def get_file_name():
     )
 
 
+@app.route('/api/system-design/questions', methods=['GET', 'POST'])
+def system_design_questions():
+    payload = request.get_json(silent=True) or {}
+    app_idea = payload.get('app_idea', request.args.get('app_idea', ''))
+    return app.response_class(
+        response=json.dumps({"questions": system_design_agent.get_questions(app_idea)}, indent=4),
 @app.route('/api/system-design/questions', methods=['GET'])
 def system_design_questions():
     return app.response_class(
@@ -295,6 +301,19 @@ def system_design_questions():
 @app.route('/api/system-design/options', methods=['POST'])
 def system_design_options():
     payload = request.get_json(silent=True) or {}
+    app_idea = payload.get("app_idea", "")
+    answers = payload.get("answers", {})
+
+    if not app_idea.strip():
+        return app.response_class(
+            response=json.dumps({"error": "app_idea is required"}, indent=4),
+            status=400,
+            mimetype='application/json'
+        )
+
+    recommendation = system_design_agent.build_design_options(app_idea, answers)
+    return app.response_class(
+        response=json.dumps(recommendation, indent=4),
     answers = payload.get("answers", {})
     options = system_design_agent.build_design_options(answers)
     return app.response_class(

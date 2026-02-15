@@ -256,6 +256,18 @@ To accomplish this follow the below steps,
 #### Generating a WBR config file using AI
 
 #### System Design Agent
+You can use the built-in System Design Agent to generate executable architecture guidance from an app idea.
+
+1. Open `http://localhost:5001/system-design.html`.
+2. Enter your app idea (for example: food delivery, e-commerce, SaaS analytics, IoT telemetry).
+3. Click **Ask Clarifying Questions** and choose options for cloud, scale, traffic, consistency, region strategy, and domain priorities.
+4. Click **Generate 3 Design Levels**.
+5. Review:
+   - **Simple design** (MVP style)
+   - **Complex design (Medium scale)**
+   - **Highly complex design** (global/high scale)
+
+Each option includes cloud-provider-specific components, a text system diagram, user action flow, and traffic flow explanation.
 You can also use the built-in System Design Agent to generate cloud-provider-specific architecture options and text diagrams based on workload scale and requirements.
 
 1. Open `http://localhost:5001/system-design.html`.
