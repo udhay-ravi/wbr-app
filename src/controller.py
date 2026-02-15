@@ -440,7 +440,13 @@ def build_report():
                                 json.dumps([deck], indent=4, cls=controller_util.Encoder))
 
 
-def start():
+def start(environ=None, start_response=None):
+    """
+    Supports both app-factory style (`waitress-serve --call src.controller:start`)
+    and direct WSGI callable style (`python -m waitress src.controller:start`).
+    """
+    if environ is not None and start_response is not None:
+        return app(environ, start_response)
     return app
 
 

@@ -165,6 +165,27 @@ Once the command is successful, the application will be running, and you can ope
 Once the command is run successful, the application will be running, and you can open your web browser and navigate to `http://localhost:5001/wbr.html` to view the WBR App.
 
 
+
+### Troubleshooting localhost connection refused
+If you see `ERR_CONNECTION_REFUSED` on `http://localhost:5001/wbr.html`, the web server is not running yet (or is running on another port).
+
+Start the app using one of the following commands from the project root:
+
+```bash
+# Option 1
+waitress-serve --port=5001 --call src.controller:start
+
+# Option 2 (equivalent, module form)
+python -m waitress --listen=0.0.0.0:5001 --call src.controller:start
+
+# Option 3 (development server)
+python -m flask --app src.controller run --host 0.0.0.0 --port 5001
+```
+
+Then open:
+- `http://localhost:5001/wbr.html`
+- `http://localhost:5001/system-design.html`
+
 ## Using the WBR App
 To access the WBR App route your browser to `http[s]://<domain>/wbr.html`.
 
