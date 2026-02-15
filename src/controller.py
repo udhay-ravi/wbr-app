@@ -17,6 +17,7 @@ from werkzeug.utils import redirect
 import src.controller_utility as controller_util
 import src.test as test
 import src.validator as validator
+import src.system_design_agent as system_design_agent
 import src.wbr as wbr
 from src.publish_utility import PublishWbr
 
@@ -277,6 +278,27 @@ def get_file_name():
     files.sort()
     return app.response_class(
         response=json.dumps(files, indent=4, cls=controller_util.Encoder),
+        status=200,
+        mimetype='application/json'
+    )
+
+
+@app.route('/api/system-design/questions', methods=['GET'])
+def system_design_questions():
+    return app.response_class(
+        response=json.dumps({"questions": system_design_agent.get_questions()}, indent=4),
+        status=200,
+        mimetype='application/json'
+    )
+
+
+@app.route('/api/system-design/options', methods=['POST'])
+def system_design_options():
+    payload = request.get_json(silent=True) or {}
+    answers = payload.get("answers", {})
+    options = system_design_agent.build_design_options(answers)
+    return app.response_class(
+        response=json.dumps({"options": options}, indent=4),
         status=200,
         mimetype='application/json'
     )
