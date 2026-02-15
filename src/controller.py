@@ -17,6 +17,7 @@ from werkzeug.utils import redirect
 import src.controller_utility as controller_util
 import src.test as test
 import src.validator as validator
+import src.system_design_agent as system_design_agent
 import src.wbr as wbr
 from src.publish_utility import PublishWbr
 
@@ -282,6 +283,38 @@ def get_file_name():
     )
 
 
+@app.route('/api/system-design/questions', methods=['GET', 'POST'])
+def system_design_questions():
+    payload = request.get_json(silent=True) or {}
+    app_idea = payload.get('app_idea', request.args.get('app_idea', ''))
+    return app.response_class(
+        response=json.dumps({"questions": system_design_agent.get_questions(app_idea)}, indent=4),
+        status=200,
+        mimetype='application/json'
+    )
+
+
+@app.route('/api/system-design/options', methods=['POST'])
+def system_design_options():
+    payload = request.get_json(silent=True) or {}
+    app_idea = payload.get("app_idea", "")
+    answers = payload.get("answers", {})
+
+    if not app_idea.strip():
+        return app.response_class(
+            response=json.dumps({"error": "app_idea is required"}, indent=4),
+            status=400,
+            mimetype='application/json'
+        )
+
+    recommendation = system_design_agent.build_design_options(app_idea, answers)
+    return app.response_class(
+        response=json.dumps(recommendation, indent=4),
+        status=200,
+        mimetype='application/json'
+    )
+
+
 @app.route('/wbr-unit-test', methods=["GET"])
 def run_unit_test():
     """
@@ -399,7 +432,13 @@ def build_report():
                                 json.dumps([deck], indent=4, cls=controller_util.Encoder))
 
 
-def start():
+def start(environ=None, start_response=None):
+    """
+    Supports both app-factory style (`waitress-serve --call src.controller:start`)
+    and direct WSGI callable style (`python -m waitress src.controller:start`).
+    """
+    if environ is not None and start_response is not None:
+        return app(environ, start_response)
     return app
 
 

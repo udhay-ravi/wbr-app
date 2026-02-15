@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>System Design Agent</title>
+  <link rel="stylesheet" href="system-design.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>System Design Agent</h1>
+    <p>Describe your app idea, answer clarifying questions, and receive 3 architecture levels with diagrams and traffic-flow explanations.</p>
+
+    <section class="panel">
+      <label for="appIdea"><strong>App idea</strong></label>
+      <textarea id="appIdea" rows="3" placeholder="Example: Build a food delivery app with live order tracking and millions of users"></textarea>
+      <div class="actions inline">
+        <button id="askQuestions">Ask Clarifying Questions</button>
+      </div>
+    </section>
+
+    <section id="questionnaire" class="panel hidden"></section>
+
+    <div class="actions hidden" id="generateWrap">
+      <button id="generate">Generate 3 Design Levels</button>
+    </div>
+
+    <section id="results"></section>
+  </main>
+  <script src="system-design.js"></script>
+</body>
+</html>

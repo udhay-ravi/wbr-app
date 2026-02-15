@@ -165,6 +165,27 @@ Once the command is successful, the application will be running, and you can ope
 Once the command is run successful, the application will be running, and you can open your web browser and navigate to `http://localhost:5001/wbr.html` to view the WBR App.
 
 
+
+### Troubleshooting localhost connection refused
+If you see `ERR_CONNECTION_REFUSED` on `http://localhost:5001/wbr.html`, the web server is not running yet (or is running on another port).
+
+Start the app using one of the following commands from the project root:
+
+```bash
+# Option 1
+waitress-serve --port=5001 --call src.controller:start
+
+# Option 2 (equivalent, module form)
+python -m waitress --listen=0.0.0.0:5001 --call src.controller:start
+
+# Option 3 (development server)
+python -m flask --app src.controller run --host 0.0.0.0 --port 5001
+```
+
+Then open:
+- `http://localhost:5001/wbr.html`
+- `http://localhost:5001/system-design.html`
+
 ## Using the WBR App
 To access the WBR App route your browser to `http[s]://<domain>/wbr.html`.
 
@@ -254,6 +275,21 @@ To accomplish this follow the below steps,
 5. You will be able to generate a WBR report using this config file.
 
 #### Generating a WBR config file using AI
+
+#### System Design Agent
+You can use the built-in System Design Agent to generate executable architecture guidance from an app idea.
+
+1. Open `http://localhost:5001/system-design.html`.
+2. Enter your app idea (for example: food delivery, e-commerce, SaaS analytics, IoT telemetry).
+3. Click **Ask Clarifying Questions** and choose options for cloud, scale, traffic, consistency, region strategy, and domain priorities.
+4. Click **Generate 3 Design Levels**.
+5. Review:
+   - **Simple design** (MVP style)
+   - **Complex design (Medium scale)**
+   - **Highly complex design** (global/high scale)
+
+Each option includes cloud-provider-specific components, a text system diagram, user action flow, and traffic flow explanation.
+
 We have a feature where you can install our AI plugin to generate the config file using the same instructions as above.
 To install the plugin you will have do the following.
 
