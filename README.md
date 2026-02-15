@@ -289,6 +289,11 @@ You can use the built-in System Design Agent to generate executable architecture
    - **Highly complex design** (global/high scale)
 
 Each option includes cloud-provider-specific components, a text system diagram, user action flow, and traffic flow explanation.
+You can also use the built-in System Design Agent to generate cloud-provider-specific architecture options and text diagrams based on workload scale and requirements.
+
+1. Open `http://localhost:5001/system-design.html`.
+2. Answer the guided design questions (app type, MAU, RPS, consistency, regions, and compliance).
+3. Click **Generate Design Options** to receive architecture patterns with provider-specific services and sizing notes.
 
 We have a feature where you can install our AI plugin to generate the config file using the same instructions as above.
 To install the plugin you will have do the following.
