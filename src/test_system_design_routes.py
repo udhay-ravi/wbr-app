@@ -22,3 +22,11 @@ def test_system_design_shortcut_redirects_to_static_page():
 
     assert response.status_code == 302
     assert response.headers['Location'].endswith('/system-design.html')
+
+
+def test_pmnotes_shortcut_redirects_to_static_page():
+    client = app.test_client()
+    response = client.get('/pmnotes')
+
+    assert response.status_code == 302
+    assert response.headers['Location'].endswith('/pmnotes.html')

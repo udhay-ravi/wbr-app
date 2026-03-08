@@ -285,6 +285,12 @@ def get_file_name():
 
 
 
+
+
+@app.route('/pmnotes', methods=['GET'])
+def pmnotes_page():
+    return redirect('/pmnotes.html')
+
 @app.route('/system-design', methods=['GET'])
 def system_design_page():
     return redirect('/system-design.html')
