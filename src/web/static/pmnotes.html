@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PMNotes</title>
+  <link rel="stylesheet" href="/pmnotes.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>PMNotes</h1>
+    <p>Daily execution + ELT-level PRD writing workspace.</p>
+  </header>
+
+  <main class="layout">
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="daily">Daily Notes</button>
+      <button class="tab-btn" data-tab="prd">PRD Studio</button>
+    </nav>
+
+    <section id="daily" class="tab-panel active">
+      <div class="grid-two">
+        <article class="card">
+          <h2>Checklist</h2>
+          <div class="row">
+            <input id="todoInput" type="text" placeholder="Add a task" />
+            <button id="addTodoBtn">Add</button>
+          </div>
+          <ul id="todoList" class="todo-list"></ul>
+        </article>
+
+        <article class="card">
+          <h2>Kanban Board</h2>
+          <div class="row">
+            <input id="kanbanTaskInput" type="text" placeholder="Task title" />
+            <select id="kanbanStatus">
+              <option value="todo">To Do</option>
+              <option value="doing">Doing</option>
+              <option value="done">Done</option>
+            </select>
+            <button id="addKanbanBtn">Add Card</button>
+          </div>
+          <div class="kanban-board">
+            <div class="kanban-col">
+              <h3>To Do</h3>
+              <div id="todoCol" class="kanban-list"></div>
+            </div>
+            <div class="kanban-col">
+              <h3>Doing</h3>
+              <div id="doingCol" class="kanban-list"></div>
+            </div>
+            <div class="kanban-col">
+              <h3>Done</h3>
+              <div id="doneCol" class="kanban-list"></div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="prd" class="tab-panel">
+      <article class="card">
+        <div class="row wrap">
+          <h2>PRD Builder</h2>
+          <label>
+            AI model
+            <select id="modelSelector">
+              <option>GPT-4.1</option>
+              <option>Claude 3.5 Sonnet</option>
+              <option>Gemini 1.5 Pro</option>
+              <option>Llama 3.1 70B</option>
+            </select>
+          </label>
+          <button id="saveDraftBtn">Save Draft</button>
+          <button id="exportDocBtn">Export Google Doc (.doc)</button>
+          <button id="exportPdfBtn">Export PDF</button>
+        </div>
+
+        <p class="hint">Select only the PRD sections you need. Content is auto-saved locally.</p>
+
+        <div id="sectionToggles" class="section-toggles"></div>
+        <div id="sectionsContainer"></div>
+      </article>
+
+      <article class="card">
+        <h2>PRD Depth Graphs</h2>
+        <p class="hint">Use this as a quality cue: sections with low coverage likely need sharper thinking.</p>
+        <div id="coverageGraph" class="coverage-graph"></div>
+      </article>
+    </section>
+  </main>
+
+  <template id="sectionTemplate">
+    <section class="prd-section">
+      <h3 class="section-title"></h3>
+      <p class="example-title">Example narrative</p>
+      <p class="example-text"></p>
+      <label class="prompt-label">Your content</label>
+      <textarea rows="7" class="section-input"></textarea>
+      <div class="predictor">
+        <span>Suggested next sentence:</span>
+        <button class="insertSuggestionBtn">Insert</button>
+        <p class="suggestion-text"></p>
+      </div>
+    </section>
+  </template>
+
+  <script src="/pmnotes.js"></script>
+</body>
+</html>
